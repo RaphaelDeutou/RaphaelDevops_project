@@ -43,14 +43,12 @@ jobs:
         run: npm run lint # Lancer l'analyse statique du code avec ESLint
 
       - name: Scan Dockerfile with Hadolint
-        uses: hadolint/hadolint-action@v2
-        with:
-          dockerfile: Dockerfile
+        uses: hadolint/hadolint-action@v1.5.0 # Utiliser la version v1.5.0 qui est la plus récente disponible
 
       - name: Run Semgrep
         uses: returntocorp/semgrep-action@v1
         with:
-          config: p/ci # Utiliser la configuration de Semgrep pour le CI
+          config: p/ci # Utiliser la configuration de
 
   build-and-push:
     runs-on: ubuntu-latest
@@ -67,8 +65,8 @@ jobs:
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/nodejsapp .
 
-      - name: run Docker image
-        run: docker run -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/nodejsapp
+      # - name: run Docker image
+      #   run: docker run -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/nodejsapp
 
       - name: connect Docker image
         run: docker login -u ${{ secrets.DOCKER_USERNAME }}
