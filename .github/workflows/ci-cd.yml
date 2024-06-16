@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: start app
+        run: npm start
+
       - name: Run unit tests
         run: npm test
 
@@ -64,12 +67,21 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/../../nodejsapp:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/nodejsapp .
+
+      - name: run Docker image
+        run: docker run -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/nodejsapp
+
+      - name: connect Docker image
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }}
+
+      - name: connect Docker image
+        run: docker tag sample-app ${{ secrets.DOCKER_USERNAME }}/nodejsapp:latest
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/../../nodejsapp:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/nodejsapp:latest
 
       - name: Security scan with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKER_USERNAME }}/../../nodejsapp:latest
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/nodejsapp:latest
