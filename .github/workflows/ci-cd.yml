@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - "feature/*"
+      - "feature/*" # Push sur une branche de feature
   pull_request:
     branches:
-      - main
+      - main # Pull request vers la branche principale
   workflow_dispatch:
 
 jobs:
@@ -31,6 +31,8 @@ jobs:
         run: npm test
 
   hadolint:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+
     name: hadolint scan
     runs-on: ubuntu-latest
     permissions:
@@ -66,6 +68,8 @@ jobs:
           ls
 
   lint:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+
     name: lint code base
     runs-on: ubuntu-latest
     steps:
@@ -79,6 +83,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
 
   semgrep-ci:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+
     container:
       image: semgrep/semgrep:canary
 
@@ -86,12 +92,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: semgrep ci
-  #     - name: Run Semgrep
-  #       uses: returntocorp/semgrep-action@v1
-  #       with:
-  #         config: p/ci # Utiliser la configuration de Semgrep pour le CI
 
   build-and-push:
+    if: github.ref == 'refs/heads/main' && github.event.before != github.sha
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
