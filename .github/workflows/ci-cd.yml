@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - "feature/*" # Push sur une branche de feature
+      - "feature/*"
   pull_request:
     branches:
-      - main # Pull request vers la branche principale
+      - main
   workflow_dispatch:
 
 jobs:
